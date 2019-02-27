@@ -4,7 +4,6 @@ let userArray = {}
 //solution goes here
 document.addEventListener('DOMContentLoaded', ()=>{
     startUp()
-
 })
 
 function startUp(){
@@ -94,14 +93,20 @@ function createCard(data) {
 }
 
 function addPokemon(user){
-  let promise = Adapter.addPokemonToUser(user.id)
-  promise.then(json => updateAddUser(json))
+  //if statement so a user can not have more than 6 pokemon
+  if(user.pokemons.length < 6){
+    let promise = Adapter.addPokemonToUser(user.id)
+    promise.then(json => updateAddUser(json))
+  }else{
+    alert(`I'm sorry ${user.name} you cannnot have more than 6 Pokemon.`);
+  }
+
 }
 
 function releasePoke(poke){
+  //fetch to delete pokemon
   let promise = Adapter.deletePokemonFromUser(poke)
   promise.then(json => updateDeleteUser(json))
-
 }
 
 function getMainDiv(){
