@@ -1,3 +1,6 @@
+//adding this global varable to i dont have to make another fetch call
+let userArray = {}
+
 //solution goes here
 document.addEventListener('DOMContentLoaded', ()=>{
     startUp()
@@ -15,8 +18,12 @@ function jsonHandeler(json){
   // reset inner text of mai div
   getMainDiv().innerText = ""
 
+  //setting global variable
+  userArray = json
+
   //for each user make there card and render it to the screen
   json.forEach(renderUser)
+
 }
 
 function renderUser(user){
@@ -87,12 +94,44 @@ function createCard(data) {
 }
 
 function addPokemon(user){
-  debugger
+  let promise = Adapter.addPokemonToUser(user.id)
+  promise.then(json => updateAddUser(json))
 }
+
 function releasePoke(poke){
-  debugger
+  let promise = Adapter.deletePokemonFromUser(poke)
+  promise.then(json => updateDeleteUser(json))
+
 }
 
 function getMainDiv(){
   return document.getElementById('cards-main')
+}
+
+function updateAddUser(poke){
+  //updating userArray variables
+  userArray.forEach((cur)=>{
+    if (cur.id === poke.trainer_id) {
+      cur.pokemons.push(poke)
+    }
+  })
+
+  //update DOM without a fetch
+  jsonHandeler(userArray)
+
+}
+
+function updateDeleteUser(poke){
+  //updating userArray variables
+  userArray.forEach((cur)=>{
+    if (cur.id === poke.trainer_id) {
+      //removing pokemon from userArray
+      cur.pokemons = cur.pokemons.filter((e)=>{return e.id !== poke.id})
+
+    }
+  })
+
+  //update DOM without a fetch
+  jsonHandeler(userArray)
+
 }
