@@ -1,3 +1,6 @@
+//if i refactored grab to add a pokemon grab the ul for a specific user and .appendchild to the ul
+// when you delete grab it by the li and remove it
+
 //adding this global varable to i dont have to make another fetch call
 let userArray = []
 
