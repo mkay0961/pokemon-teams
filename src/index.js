@@ -1,5 +1,5 @@
 //adding this global varable to i dont have to make another fetch call
-let userArray = {}
+let userArray = []
 
 //solution goes here
 document.addEventListener('DOMContentLoaded', ()=>{
