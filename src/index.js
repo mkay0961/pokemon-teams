@@ -1,9 +1,3 @@
-//if i refactored grab to add a pokemon grab the ul for a specific user and .appendchild to the ul
-// when you delete grab it by the li and remove it
-
-//adding this global varable to i dont have to make another fetch call
-let userArray = []
-
 //solution goes here
 document.addEventListener('DOMContentLoaded', ()=>{
     startUp()
@@ -19,9 +13,6 @@ function startUp(){
 function jsonHandeler(json){
   // reset inner text of mai div
   getMainDiv().innerText = ""
-
-  //setting global variable
-  userArray = json
 
   //for each user make there card and render it to the screen
   json.forEach(renderUser)
@@ -66,25 +57,11 @@ function createCard(data) {
   // addBtn.id = `btn-add-user-${data.id}`
 
   let ul = document.createElement('ul')
-  // ul.id = `ul-user-${data.id}`
+  ul.id = `ul-user-${data.id}`
 
   //for each pokemon create there own li
   data.pokemons.forEach((poke)=>{
-    let li = document.createElement('li')
-    li.id = `li-pokemon-${poke.id}`
-    li.innerText = `${poke.nickname} (${poke.species})`
-
-    let releaseBtn = document.createElement('button')
-    releaseBtn.classList = "release"
-    releaseBtn.innerText = "Release"
-    //add event listener to release
-    releaseBtn.addEventListener('click', ()=>{releasePoke(poke)})
-
-    //add btn to li
-    li.appendChild(releaseBtn)
-
-    //add li to list
-    ul.appendChild(li)
+    renderPoke(ul, poke)
   })
 
   //add elements to div
@@ -97,7 +74,7 @@ function createCard(data) {
 
 function addPokemon(user){
   //if statement so a user can not have more than 6 pokemon
-  if(user.pokemons.length < 6){
+  if(getUlElement(user.id).childElementCount < 6){
     let promise = Adapter.addPokemonToUser(user.id)
     promise.then(json => updateAddUser(json))
   }else{
@@ -117,29 +94,33 @@ function getMainDiv(){
 }
 
 function updateAddUser(poke){
-  //updating userArray variables
-  userArray.forEach((cur)=>{
-    if (cur.id === poke.trainer_id) {
-      cur.pokemons.push(poke)
-    }
-  })
+  let ul = getUlElement(poke.trainer_id)
+  renderPoke(ul, poke)
 
-  //update DOM without a fetch
-  jsonHandeler(userArray)
-
+}
+function getUlElement(id){
+  return document.getElementById(`ul-user-${id}`)
 }
 
 function updateDeleteUser(poke){
-  //updating userArray variables
-  userArray.forEach((cur)=>{
-    if (cur.id === poke.trainer_id) {
-      //removing pokemon from userArray
-      cur.pokemons = cur.pokemons.filter((e)=>{return e.id !== poke.id})
+  let li = document.getElementById(`li-pokemon-${poke.id}`)
+  li.remove()
+}
 
-    }
-  })
+function renderPoke(ul, poke){
+  let li = document.createElement('li')
+  li.id = `li-pokemon-${poke.id}`
+  li.innerText = `${poke.nickname} (${poke.species})`
 
-  //update DOM without a fetch
-  jsonHandeler(userArray)
+  let releaseBtn = document.createElement('button')
+  releaseBtn.classList = "release"
+  releaseBtn.innerText = "Release"
+  //add event listener to release
+  releaseBtn.addEventListener('click', ()=>{releasePoke(poke)})
 
+  //add btn to li
+  li.appendChild(releaseBtn)
+
+  //add li to list
+  ul.appendChild(li)
 }
